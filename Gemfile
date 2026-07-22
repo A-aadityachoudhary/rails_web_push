@@ -72,6 +72,8 @@ end
 
 gem "activeadmin"
 gem "devise"
-gem "webpush"
+gem 'web-push', github: 'pushpad/web-push', branch: 'master'
 gem 'sassc'
 gem 'sassc-rails'
+gem 'ransack'
+gem "rack-cors"

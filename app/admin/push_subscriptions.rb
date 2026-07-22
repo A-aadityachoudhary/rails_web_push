@@ -8,7 +8,13 @@ ActiveAdmin.register PushSubscription do
     column :p256dh
     column :auth
     column :created_at
-    actions
+    actions defaults: true do |subscription|
+    item "Send",
+           send_notification_admin_push_subscription_path(subscription),
+           method: :post,
+           class: "member_link" 
+    
+    end
   end
 
   filter :endpoint
@@ -23,5 +29,10 @@ ActiveAdmin.register PushSubscription do
       row :created_at
       row :updated_at
     end
+  end
+
+  member_action :send_notification, method: :post do
+    PushNotificationService.send_notification(resource, "hello", "message from active admin")
+    redirect_to admin_push_subscriptions_path, notice: "notification sent"
   end
 end
