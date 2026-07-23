@@ -1,10 +1,12 @@
 class PushNotificationService
-  def self.send_notification(subscription, title, body)
+  def self.send_notification(subscription, title, body, icon = nil, image = nil)
     
     WebPush.payload_send(
       message: {
         title: title,
-        body: body
+        body: body,
+        icon: icon,
+        image: image
       }.to_json,
 
       endpoint: subscription.endpoint,

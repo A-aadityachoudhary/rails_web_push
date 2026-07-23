@@ -2,13 +2,35 @@ active_admin_form_for :notification,
                       url: send_notification_all_submit_admin_push_subscriptions_path,
                       method: :post do |f|
 
-  f.inputs do
-    f.input :title
-    f.input :body, as: :text
+  f.inputs "Notification Details" do
+    f.input :title,
+            input_html: {
+              placeholder: "Enter notification title"
+            }
+
+    f.input :body,
+            as: :text,
+            input_html: {
+              rows: 4,
+              placeholder: "Enter notification message"
+            }
+
+    f.input :icon,
+            label: "Icon URL",
+            input_html: {
+              placeholder: "https://your-site.com/icon.png"
+            }
+
+    f.input :image,
+            label: "Image URL",
+            input_html: {
+              placeholder: "https://your-site.com/banner.jpg"
+            }
   end
 
   f.actions do
     f.action :submit, label: "Send Notification to All"
+    f.cancel_link(admin_push_subscriptions_path)
   end
 
 end

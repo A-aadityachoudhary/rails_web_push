@@ -2,13 +2,29 @@ active_admin_form_for :notification,
                       url: send_notification_submit_admin_push_subscription_path(resource),
                       method: :post do |f|
 
-  f.inputs do
+  f.inputs "Notification Details" do
     f.input :title
-    f.input :body, as: :text
+
+    f.input :body,
+            as: :text,
+            input_html: { rows: 4 }
+
+    f.input :icon,
+            label: "Icon URL",
+            input_html: {
+              placeholder: "https://example.com/icon.png"
+            }
+
+    f.input :image,
+            label: "Image URL",
+            input_html: {
+              placeholder: "https://example.com/banner.jpg"
+            }
   end
 
   f.actions do
     f.action :submit, label: "Send Notification"
+    f.cancel_link(admin_push_subscriptions_path)
   end
 
 end
