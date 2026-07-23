@@ -19,6 +19,13 @@ ActiveAdmin.register PushSubscription do
            send_notification_admin_push_subscription_path(subscription),
            method: :post,
            class: "member_link" 
+
+    item "Unsubscribe",
+         unsubscribe_admin_push_subscription_path(subscription),
+         method: :delete,
+         data: { confirm: "Remove this subscriber?" },
+         class: "member_link"
+
     
     end
   end
@@ -65,4 +72,10 @@ ActiveAdmin.register PushSubscription do
     redirect_to admin_push_subscriptions_path,
                 notice: "#{success} notification(s) sent successfully. #{failed} failed."
   end
+
+  # for unsubcribering individuals
+  member_action :unsubscribe, method: :delete do
+    resource.destroy
+    redirect_to admin_push_subscriptions_path, notice: "Subscriber removed successfully."
+  end 
 end

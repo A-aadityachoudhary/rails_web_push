@@ -13,18 +13,18 @@ class PushSubscriptionsController < ApplicationController
     subscription.p256dh = params[:keys][:p256dh]
     subscription.auth   = params[:keys][:auth]
     
-    if subscription.save
-        render json: {
-            success: true,
-            message: "subscription saved"
-        },
-        status: :created
-    else
-        render json: {
-            success: false,
-            errors: subscription.error.full_messages
-        },
-        status: :unprocessable_entity
+        if subscription.save
+            render json: {
+                success: true,
+                message: "subscription saved"
+            },
+            status: :created
+        else
+            render json: {
+                success: false,
+                errors: subscription.error.full_messages
+            },
+            status: :unprocessable_entity
     end
         
     end
