@@ -2,9 +2,8 @@ ActiveAdmin.register PushSubscription do
   permit_params :endpoint, :p256dh, :auth
 
   action_item :send_notification_to_all, only: :index do
-    link_to "Send Notification to All",
-            send_notification_all_admin_push_subscriptions_path,
-            method: :post
+  link_to "Send Notification To All",
+          send_notification_all_admin_push_subscriptions_path
   end
 
   index do
@@ -17,7 +16,6 @@ ActiveAdmin.register PushSubscription do
     actions defaults: true do |subscription|
     item "Send",
            send_notification_admin_push_subscription_path(subscription),
-           method: :post,
            class: "member_link" 
 
     item "Unsubscribe",
@@ -44,13 +42,33 @@ ActiveAdmin.register PushSubscription do
     end
   end
 
+  member_action :send_notification, method: :get do
+  end
+
 # for singular subscriber
-  member_action :send_notification, method: :post do
-    PushNotificationService.send_notification(resource, "hello", "message from active admin")
-    redirect_to admin_push_subscriptions_path, notice: "notification sent"
+  member_action :send_notification_submit, method: :post do
+
+      title = params[:notification][:title]
+      body  = params[:notification][:body]
+
+      PushNotificationService.send_notification(
+        resource,
+        title,
+        body
+      )
+
+      redirect_to admin_push_subscriptions_path,
+                  notice: "Notification sent successfully."
   end
 # for all subscribers
-  collection_action :send_notification_all, method: :post do
+  collection_action :send_notification_all, method: :get do
+  end
+
+
+  collection_action :send_notification_all_submit, method: :post do
+    title = params[:notification][:title]
+    body  = params[:notification][:body]
+
     success = 0
     failed = 0
 
@@ -58,15 +76,13 @@ ActiveAdmin.register PushSubscription do
       begin
         PushNotificationService.send_notification(
           subscription,
-          "Hello",
-          "Message from ActiveAdmin"
+          title,
+          body
         )
         success += 1
       rescue => e
         failed += 1
-        Rails.logger.error(
-          "Push failed for Subscription ##{subscription.id}: #{e.message}"
-        )
+        Rails.logger.error "Failed for Subscription ##{subscription.id}: #{e.message}"
       end
     end
     redirect_to admin_push_subscriptions_path,
