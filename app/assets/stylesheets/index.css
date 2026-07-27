@@ -1,0 +1,23 @@
+body {
+  background-color: beige;
+}
+.popup {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  width: 320px;
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 8px 30px rgba(0,0,0,.2);
+}
+
+#subscribe {
+  background: #2563eb;
+  color: white;
+  padding: 10px 20px;
+}
+
+#cancel {
+  background: #ddd;
+}
