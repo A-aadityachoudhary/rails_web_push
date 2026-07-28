@@ -81,6 +81,4 @@ test:
 #
 production:
   <<: *default
-  database: web_push_rails_production
-  username: web_push_rails
-  password: <%= ENV["WEB_PUSH_RAILS_DATABASE_PASSWORD"] %>
+  url: <%= ENV["DATABASE_URL"] %>
