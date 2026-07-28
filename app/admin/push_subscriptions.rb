@@ -52,13 +52,17 @@ ActiveAdmin.register PushSubscription do
       body  = params[:notification][:body]
       icon = params[:notification][:icon]
       image = params[:notification][:image]
+      action_title = params[:notification][:action_title]
+      action_url   = params[:notification][:action_url]
 
       PushNotificationService.send_notification(
         resource,
         title,
         body,
         icon,
-        image
+        image,
+        action_title,
+        action_url
       )
 
       redirect_to admin_push_subscriptions_path,
@@ -74,6 +78,8 @@ ActiveAdmin.register PushSubscription do
     body  = params[:notification][:body]
     icon = params[:notification][:icon]
     image = params[:notification][:image]
+    action_title = params[:notification][:action_title]
+    action_url   = params[:notification][:action_url]
 
     success = 0
     failed = 0
@@ -85,7 +91,9 @@ ActiveAdmin.register PushSubscription do
           title,
           body,
           icon,
-          image
+          image,
+          action_title,
+          action_url
         )
         success += 1
       rescue => e

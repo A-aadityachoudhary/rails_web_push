@@ -20,6 +20,17 @@ active_admin_form_for :notification,
             input_html: {
               placeholder: "https://example.com/banner.jpg"
             }
+    f.input :action_title,
+          label: "Button Text",
+          input_html: {
+            placeholder: "View Details"
+          }
+
+  f.input :action_url,
+          label: "Button URL",
+          input_html: {
+            placeholder: "https://example.com/offers"
+          }
   end
 
   f.actions do

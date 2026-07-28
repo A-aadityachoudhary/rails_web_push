@@ -30,6 +30,11 @@ console.log("Image:", data.image);
     data: {
       url: data.url || "/",
     },
+    actions: data.actions,
+
+      data: {
+        url: data.url
+      }
   };
 
   event.waitUntil(

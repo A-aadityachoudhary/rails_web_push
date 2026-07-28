@@ -1,7 +1,7 @@
 console.log("JS Loaded");
 
 const PUBLIC_VAPID_KEY =
-  "BBjdj04QEHUquFcZJtWEeB8gzYxb1ydERr41Y5zj82objCAmfkB0R0Kcv-fp9UV3yJhqe8fGVZay0kV3yhaToYU=";
+  "BOvHJNqfb9MgmzR96e49QKLP9tzIELYaSQPuj5n9K-kh24byeHYtwrE-7V7wdRN3a2PlxWj6xkV1sAE0jahJDm0=";
 
 const API_URL = "/push_subscriptions";
 
