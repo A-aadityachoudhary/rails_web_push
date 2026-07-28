@@ -22,7 +22,7 @@ class PushNotificationService
 
       vapid: {
         subject: "mailto:admin@example.com",
-        public_key: "BOvHJNqfb9MgmzR96e49QKLP9tzIELYaSQPuj5n9K-kh24byeHYtwrE-7V7wdRN3a2PlxWj6xkV1sAE0jahJDm0="
+        public_key: "BOvHJNqfb9MgmzR96e49QKLP9tzIELYaSQPuj5n9K-kh24byeHYtwrE-7V7wdRN3a2PlxWj6xkV1sAE0jahJDm0=",
         private_key: "8xcrfmRSqTW9kS5GnAOa5LsHl506cwGZ9o5au5guhtk="
       }
     )
