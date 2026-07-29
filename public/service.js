@@ -1,64 +1,94 @@
 console.log("Service Worker Loaded");
 
-// Push Event
+// Receive Push Notification
 self.addEventListener("push", (event) => {
   console.log("Push Received");
 
-  if (!event.data) {
-    return;
-  }
-
   let data = {};
 
-  try {
-    data = event.data.json();
-    console.log("Payload:", data);
-console.log("Icon:", data.icon);
-console.log("Image:", data.image);
-  } catch (e) {
-    data = {
-      title: "Notification",
-      body: event.data.text(),
-    };
+  if (event.data) {
+    try {
+      data = event.data.json();
+    } catch (err) {
+      console.error("Unable to parse push payload:", err);
+
+      data = {
+        title: "Notification",
+        body: event.data.text(),
+      };
+    }
   }
 
+  console.log("Payload:", data);
+
   const options = {
-    body: data.body,
-    icon: data.icon,
-    image: data.image,
-    badge: "/badge.png",
-    status_id: status.id,
+    body: data.body || "",
+    icon: data.icon || "/icon-192.png",
+    badge: data.badge || "/badge.png",
+    image: data.image || undefined,
+    tag: data.tag || undefined,
+    requireInteraction: data.requireInteraction || false,
+    renotify: data.renotify || false,
+    silent: data.silent || false,
+
+    actions: data.actions || [],
+
     data: {
       url: data.url || "/",
+      status_id: data.status_id || null,
     },
-    actions: data.actions,
-
-      data: {
-        url: data.url
-      }
   };
 
   event.waitUntil(
-    self.registration.showNotification(data.title, options)
+    self.registration.showNotification(
+      data.title || "Notification",
+      options
+    )
   );
 });
 
 // Notification Click
-self.addEventListener("notificationclick", event => {
-  console.log("notification clicked")
-  const data = event.notification.data;
+self.addEventListener("notificationclick", (event) => {
+  console.log("Notification Clicked");
 
-  fetch("/notification_clicked", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      status_id: data.status_id
-    })
-  });
+  event.notification.close();
+
+  const notificationData = event.notification.data || {};
+
+  // Optional: notify backend
+  if (notificationData.status_id) {
+    fetch("/notification_clicked", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        status_id: notificationData.status_id,
+      }),
+    }).catch((err) => console.error(err));
+  }
+
+  const targetUrl = notificationData.url || "/";
 
   event.waitUntil(
-    clients.openWindow(data.url)
+    clients.matchAll({
+      type: "window",
+      includeUncontrolled: true,
+    }).then((clientList) => {
+      for (const client of clientList) {
+        if (client.url === targetUrl && "focus" in client) {
+          return client.focus();
+        }
+      }
+
+      if (clients.openWindow) {
+        return clients.openWindow(targetUrl);
+      }
+    })
   );
+});
+
+// Optional: Notification Closed
+self.addEventListener("notificationclose", () => {
+  console.log("Notification Closed");
 });
