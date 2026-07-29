@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_07_21_094943) do
+ActiveRecord::Schema[7.0].define(version: 2026_07_29_064625) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -40,6 +40,19 @@ ActiveRecord::Schema[7.0].define(version: 2026_07_21_094943) do
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
   end
 
+  create_table "notification_statuses", force: :cascade do |t|
+    t.bigint "push_subscription_id", null: false
+    t.string "title"
+    t.text "body"
+    t.integer "status"
+    t.text "failure_reason"
+    t.datetime "clicked_at"
+    t.datetime "sent_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["push_subscription_id"], name: "index_notification_statuses_on_push_subscription_id"
+  end
+
   create_table "push_subscriptions", force: :cascade do |t|
     t.text "endpoint"
     t.text "p256dh"
@@ -48,4 +61,5 @@ ActiveRecord::Schema[7.0].define(version: 2026_07_21_094943) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "notification_statuses", "push_subscriptions"
 end

@@ -48,15 +48,78 @@ ActiveAdmin.register PushSubscription do
 # for singular subscriber
   member_action :send_notification_submit, method: :post do
 
-      title = params[:notification][:title]
-      body  = params[:notification][:body]
-      icon = params[:notification][:icon]
-      image = params[:notification][:image]
-      action_title = params[:notification][:action_title]
-      action_url   = params[:notification][:action_url]
+  title = params[:notification][:title]
+  body = params[:notification][:body]
+  icon = params[:notification][:icon]
+  image = params[:notification][:image]
+  action_title = params[:notification][:action_title]
+  action_url = params[:notification][:action_url]
 
+  status = NotificationStatus.create!(
+    push_subscription: resource,
+    title: title,
+    body: body,
+    status: :in_flight
+  )
+
+  begin
+
+    PushNotificationService.send_notification(
+      resource,
+      title,
+      body,
+      icon,
+      image,
+      action_title,
+      action_url
+    )
+
+    status.update!(
+      status: :success,
+      sent_at: Time.current
+    )
+
+  rescue => e
+
+    status.update!(
+      status: :failed,
+      failure_reason: e.message
+    )
+
+  end
+
+  redirect_to admin_push_subscriptions_path,
+                        notice: "notification sent successfully."
+end
+# for all subscribers
+  collection_action :send_notification_all, method: :get do
+  end
+
+
+  collection_action :send_notification_all_submit, method: :post do
+  title = params[:notification][:title]
+  body  = params[:notification][:body]
+  icon = params[:notification][:icon]
+  image = params[:notification][:image]
+  action_title = params[:notification][:action_title]
+  action_url   = params[:notification][:action_url]
+
+  success = 0
+  failed = 0
+
+  PushSubscription.find_each do |subscription|
+
+    # Create a tracking record for this subscriber
+    notification_status = NotificationStatus.create!(
+      push_subscription: subscription,
+      title: title,
+      body: body,
+      status: :in_flight
+    )
+
+    begin
       PushNotificationService.send_notification(
-        resource,
+        subscription,
         title,
         body,
         icon,
@@ -65,45 +128,29 @@ ActiveAdmin.register PushSubscription do
         action_url
       )
 
-      redirect_to admin_push_subscriptions_path,
-                  notice: "Notification sent successfully."
-  end
-# for all subscribers
-  collection_action :send_notification_all, method: :get do
-  end
+      notification_status.update!(
+        status: :success,
+        sent_at: Time.current
+      )
 
+      success += 1
 
-  collection_action :send_notification_all_submit, method: :post do
-    title = params[:notification][:title]
-    body  = params[:notification][:body]
-    icon = params[:notification][:icon]
-    image = params[:notification][:image]
-    action_title = params[:notification][:action_title]
-    action_url   = params[:notification][:action_url]
+    rescue => e
 
-    success = 0
-    failed = 0
+      notification_status.update!(
+        status: :failed,
+        failure_reason: e.message
+      )
 
-    PushSubscription.find_each do |subscription|
-      begin
-        PushNotificationService.send_notification(
-          subscription,
-          title,
-          body,
-          icon,
-          image,
-          action_title,
-          action_url
-        )
-        success += 1
-      rescue => e
-        failed += 1
-        Rails.logger.error "Failed for Subscription ##{subscription.id}: #{e.message}"
-      end
+      failed += 1
+
+      Rails.logger.error "Failed for Subscription ##{subscription.id}: #{e.message}"
     end
-    redirect_to admin_push_subscriptions_path,
-                notice: "#{success} notification(s) sent successfully. #{failed} failed."
   end
+
+  redirect_to admin_push_subscriptions_path,
+              notice: "#{success} notification(s) sent successfully. #{failed} failed."
+end
 
   # for unsubcribering individuals
   member_action :unsubscribe, method: :delete do

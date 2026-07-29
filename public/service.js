@@ -27,6 +27,7 @@ console.log("Image:", data.image);
     icon: data.icon,
     image: data.image,
     badge: "/badge.png",
+    status_id: status.id,
     data: {
       url: data.url || "/",
     },
@@ -43,10 +44,21 @@ console.log("Image:", data.image);
 });
 
 // Notification Click
-self.addEventListener("notificationclick", (event) => {
-  event.notification.close();
+self.addEventListener("notificationclick", event => {
+  console.log("notification clicked")
+  const data = event.notification.data;
+
+  fetch("/notification_clicked", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      status_id: data.status_id
+    })
+  });
 
   event.waitUntil(
-    clients.openWindow(event.notification.data.url)
+    clients.openWindow(data.url)
   );
 });
