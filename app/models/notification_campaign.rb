@@ -22,4 +22,10 @@ class NotificationCampaign < ApplicationRecord
       updated_at
     ]
   end
+
+  def self.ransackable_associations(auth_object = nil)
+    %w[
+      notification_statuses
+    ]
+  end
 end
