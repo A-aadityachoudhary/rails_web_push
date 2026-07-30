@@ -55,7 +55,22 @@ ActiveAdmin.register PushSubscription do
   action_title = params[:notification][:action_title]
   action_url = params[:notification][:action_url]
 
+  campaign = NotificationCampaign.create!(
+    title: title,
+    body: body,
+    icon: icon,
+    image: image,
+    action_title: action_title,
+    action_url: action_url,
+    total_sent: 1,
+    success_count: 0,
+    failed_count: 0,
+    in_flight_count: 1,
+    clicked_count: 0
+  )
+
   status = NotificationStatus.create!(
+    notification_campaign: campaign,
     push_subscription: resource,
     title: title,
     body: body,
@@ -79,12 +94,18 @@ ActiveAdmin.register PushSubscription do
       sent_at: Time.current
     )
 
+    campaign.increment!(:success_count)
+    campaign.decrement!(:in_flight_count)
+
   rescue => e
 
     status.update!(
       status: :failed,
       failure_reason: e.message
     )
+
+    campaign.increment!(:failed_count)
+    campaign.decrement!(:in_flight_count)
 
   end
 
@@ -104,6 +125,22 @@ end
   action_title = params[:notification][:action_title]
   action_url   = params[:notification][:action_url]
 
+  total = PushSubscription.count
+
+  campaign = NotificationCampaign.create!(
+    title: title,
+    body: body,
+    icon: icon,
+    image: image,
+    action_title: action_title,
+    action_url: action_url,
+    total_sent: total,
+    success_count: 0,
+    failed_count: 0,
+    in_flight_count: total,
+    clicked_count: 0
+  )
+
   success = 0
   failed = 0
 
@@ -111,6 +148,7 @@ end
 
     # Create a tracking record for this subscriber
     notification_status = NotificationStatus.create!(
+      notification_campaign: campaign,
       push_subscription: subscription,
       title: title,
       body: body,
@@ -134,6 +172,8 @@ end
       )
 
       success += 1
+      campaign.increment!(:success_count)
+      campaign.decrement!(:in_flight_count)
 
     rescue => e
 
@@ -141,6 +181,8 @@ end
         status: :failed,
         failure_reason: e.message
       )
+      campaign.increment!(:failed_count)
+      campaign.decrement!(:in_flight_count)
 
       failed += 1
 

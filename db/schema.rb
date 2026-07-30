@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_07_29_064625) do
+ActiveRecord::Schema[7.0].define(version: 2026_07_30_100406) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -40,6 +40,22 @@ ActiveRecord::Schema[7.0].define(version: 2026_07_29_064625) do
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
   end
 
+  create_table "notification_campaigns", force: :cascade do |t|
+    t.string "title"
+    t.text "body"
+    t.text "icon"
+    t.text "image"
+    t.string "action_title"
+    t.text "action_url"
+    t.integer "total_sent"
+    t.integer "success_count"
+    t.integer "failed_count"
+    t.integer "in_flight_count"
+    t.integer "clicked_count"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "notification_statuses", force: :cascade do |t|
     t.bigint "push_subscription_id", null: false
     t.string "title"
@@ -50,6 +66,8 @@ ActiveRecord::Schema[7.0].define(version: 2026_07_29_064625) do
     t.datetime "sent_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "notification_campaign_id"
+    t.index ["notification_campaign_id"], name: "index_notification_statuses_on_notification_campaign_id"
     t.index ["push_subscription_id"], name: "index_notification_statuses_on_push_subscription_id"
   end
 
@@ -61,5 +79,6 @@ ActiveRecord::Schema[7.0].define(version: 2026_07_29_064625) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "notification_statuses", "notification_campaigns"
   add_foreign_key "notification_statuses", "push_subscriptions"
 end

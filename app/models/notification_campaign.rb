@@ -1,0 +1,25 @@
+
+
+class NotificationCampaign < ApplicationRecord
+
+  has_many :notification_statuses, dependent: :destroy
+
+  def self.ransackable_attributes(auth_object = nil)
+    %w[
+      id
+      title
+      body
+      icon
+      image
+      action_title
+      action_url
+      total_sent
+      success_count
+      failed_count
+      in_flight_count
+      clicked_count
+      created_at
+      updated_at
+    ]
+  end
+end

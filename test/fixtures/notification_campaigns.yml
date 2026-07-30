@@ -1,0 +1,27 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  body: MyText
+  icon: MyText
+  image: MyText
+  action_title: MyString
+  action_url: MyText
+  total_sent: 1
+  success_count: 1
+  failed_count: 1
+  in_flight_count: 1
+  clicked_count: 1
+
+two:
+  title: MyString
+  body: MyText
+  icon: MyText
+  image: MyText
+  action_title: MyString
+  action_url: MyText
+  total_sent: 1
+  success_count: 1
+  failed_count: 1
+  in_flight_count: 1
+  clicked_count: 1
