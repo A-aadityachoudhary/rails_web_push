@@ -10,24 +10,37 @@ ActiveAdmin.register_page "Dashboard" do
       end
     end
 
-    # Here is an example of a simple dashboard with columns and panels.
-    #
-    # columns do
-    #   column do
-    #     panel "Recent Posts" do
-    #       ul do
-    #         Post.recent(5).map do |post|
-    #           li link_to(post.title, admin_post_path(post))
-    #         end
-    #       end
-    #     end
-    #   end
+    section "Subscribers By Browser" do
 
-    #   column do
-    #     panel "Info" do
-    #       para "Welcome to ActiveAdmin."
-    #     end
-    #   end
-    # end
-  end # content
+      div do
+
+        para do
+          link_to(
+            "🟢 Chrome (#{PushSubscription.where(browser: 'Chrome').count})",
+            admin_push_subscriptions_path(q: { browser_eq: "Chrome" }),
+            class: "button"
+          )
+        end
+
+        para do
+          link_to(
+            "🟠 Firefox (#{PushSubscription.where(browser: 'Firefox').count})",
+            admin_push_subscriptions_path(q: { browser_eq: "Firefox" }),
+            class: "button"
+          )
+        end
+
+        para do
+          link_to(
+            "🔵 Safari (#{PushSubscription.where(browser: 'Safari').count})",
+            admin_push_subscriptions_path(q: { browser_eq: "Safari" }),
+            class: "button"
+          )
+        end
+
+      end
+
+    end
+
+  end
 end

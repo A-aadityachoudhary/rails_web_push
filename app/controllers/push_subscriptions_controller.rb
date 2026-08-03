@@ -12,6 +12,7 @@ class PushSubscriptionsController < ApplicationController
 
     subscription.p256dh = params[:keys][:p256dh]
     subscription.auth   = params[:keys][:auth]
+    subscription.browser = params[:browser]
     
         if subscription.save
             render json: {
@@ -22,7 +23,7 @@ class PushSubscriptionsController < ApplicationController
         else
             render json: {
                 success: false,
-                errors: subscription.error.full_messages
+                errors: subscription.errors.full_messages
             },
             status: :unprocessable_entity
     end

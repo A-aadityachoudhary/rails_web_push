@@ -78,13 +78,30 @@ async function subscribeUser(registration) {
 
 
 async function saveSubscription(subscription) {
+   const ua = navigator.userAgent;
+
+  let browser = "Unknown";
+
+  if (ua.includes("Firefox")) {
+    browser = "Firefox";
+  } else if (ua.includes("Edg")) {
+    browser = "Edge";
+  } else if (ua.includes("Chrome")) {
+    browser = "Chrome";
+  } else if (ua.includes("Safari")) {
+    browser = "Safari";
+  }
 
   const response = await fetch(API_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(subscription),
+    body: JSON.stringify({
+      endpoint: subscription.endpoint,
+      keys: subscription.toJSON().keys,
+      browser: browser
+    }),
   });
 
   if (!response.ok) {
