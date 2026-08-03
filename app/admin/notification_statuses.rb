@@ -3,7 +3,7 @@ ActiveAdmin.register NotificationStatus do
   actions :index, :show
 
   scope :all
-  scope :success
+  scope :delivered
   scope :failed
   scope :in_flight
 
@@ -15,7 +15,6 @@ ActiveAdmin.register NotificationStatus do
     column :title
     column :status
     column :sent_at
-    
     column :failure_reason
 
     actions

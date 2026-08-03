@@ -14,9 +14,8 @@ class NotificationCampaign < ApplicationRecord
       action_title
       action_url
       total_sent
-      success_count
+      delivered_count
       failed_count
-      in_flight_count
       clicked_count
       created_at
       updated_at
@@ -27,5 +26,8 @@ class NotificationCampaign < ApplicationRecord
     %w[
       notification_statuses
     ]
+  end
+  def in_flight_count
+    total_sent - delivered_count - failed_count
   end
 end

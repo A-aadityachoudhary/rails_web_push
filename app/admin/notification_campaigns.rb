@@ -1,6 +1,4 @@
-
 ActiveAdmin.register NotificationCampaign do
-
   actions :index, :show
 
   index do
@@ -9,10 +7,16 @@ ActiveAdmin.register NotificationCampaign do
 
     column :title
     column :body
+
     column :total_sent
-    column :success_count
+    column :delivered_count
     column :failed_count
-    column :in_flight_count
+
+    column "In Flight" do |campaign|
+      campaign.total_sent - campaign.delivered_count - campaign.failed_count
+    end
+
+    column :clicked_count
     column :created_at
 
     actions
@@ -29,12 +33,16 @@ ActiveAdmin.register NotificationCampaign do
       row :action_url
 
       row :total_sent
-      row :success_count
+      row :delivered_count
       row :failed_count
-      row :in_flight_countt
 
+      row "In Flight" do |campaign|
+        campaign.total_sent - campaign.delivered_count - campaign.failed_count
+      end
+
+      row :clicked_count
       row :created_at
+      row :updated_at
     end
   end
-
 end

@@ -3,7 +3,7 @@ class NotificationStatus < ApplicationRecord
   belongs_to :notification_campaign
   enum status: {
     in_flight: 0,
-    success: 1,
+    delivered: 1,
     failed: 2
   }
 

@@ -40,11 +40,29 @@ self.addEventListener("push", (event) => {
   };
 
   event.waitUntil(
-    self.registration.showNotification(
+  (async () => {
+    await self.registration.showNotification(
       data.title || "Notification",
       options
-    )
-  );
+    );
+
+    if (data.status_id) {
+      try {
+        await fetch("/notification_delivered", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            status_id: data.status_id,
+          }),
+        });
+      } catch (err) {
+        console.error("Delivery callback failed", err);
+      }
+    }
+  })()
+);
 });
 
 // Notification Click

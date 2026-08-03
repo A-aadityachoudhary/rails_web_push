@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_07_31_055723) do
+ActiveRecord::Schema[7.0].define(version: 2026_08_03_062434) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -48,12 +48,11 @@ ActiveRecord::Schema[7.0].define(version: 2026_07_31_055723) do
     t.string "action_title"
     t.text "action_url"
     t.integer "total_sent"
-    t.integer "success_count"
     t.integer "failed_count"
-    t.integer "in_flight_count"
     t.integer "clicked_count"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "delivered_count", default: 0, null: false
   end
 
   create_table "notification_statuses", force: :cascade do |t|

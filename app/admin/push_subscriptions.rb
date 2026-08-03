@@ -80,9 +80,8 @@ end
     action_title: action_title,
     action_url: action_url,
     total_sent: 1,
-    success_count: 0,
+    delivered_count: 0,
     failed_count: 0,
-    in_flight_count: 1,
     clicked_count: 0
   )
 
@@ -97,22 +96,20 @@ end
   begin
 
     PushNotificationService.send_notification(
-      resource,
-      title,
-      body,
-      icon,
-      image,
-      action_title,
-      action_url
+      subscription: resource,
+      notification_status: status,
+      title: title,
+      body: body,
+      icon: icon,
+      image: image,
+      action_title: action_title,
+      action_url: action_url
     )
 
-    status.update!(
-      status: :success,
-      sent_at: Time.current
-    )
+    
 
-    campaign.increment!(:success_count)
-    campaign.decrement!(:in_flight_count)
+
+
 
   rescue => e
 
@@ -122,7 +119,7 @@ end
     )
 
     campaign.increment!(:failed_count)
-    campaign.decrement!(:in_flight_count)
+   
 
   end
 
@@ -169,13 +166,12 @@ end
     action_title: action_title,
     action_url: action_url,
     total_sent: total,
-    success_count: 0,
+    delivered_count: 0,
     failed_count: 0,
-    in_flight_count: total,
     clicked_count: 0
   )
 
-  success = 0
+ 
   failed = 0
 
   subscribers.find_each do |subscription|
@@ -191,24 +187,17 @@ end
     begin
 
       PushNotificationService.send_notification(
-        subscription,
-        title,
-        body,
-        icon,
-        image,
-        action_title,
-        action_url
+        subscription: subscription,
+        notification_status: notification_status,
+        title: title,
+        body: body,
+        icon: icon,
+        image: image,
+        action_title: action_title,
+        action_url: action_url
       )
 
-      notification_status.update!(
-        status: :success,
-        sent_at: Time.current
-      )
-
-      campaign.increment!(:success_count)
-      campaign.decrement!(:in_flight_count)
-
-      success += 1
+      
 
     rescue => e
 
@@ -218,7 +207,7 @@ end
       )
 
       campaign.increment!(:failed_count)
-      campaign.decrement!(:in_flight_count)
+      
 
       failed += 1
 
@@ -230,7 +219,7 @@ end
 
   redirect_to admin_push_subscriptions_path(
     q: { browser_eq: browser }
-  ), notice: "#{success} notification(s) sent successfully to #{browser} users. #{failed} failed."
+  ), notice: "# notification(s) sent successfully to #{browser} users. #{failed} failed."
 
 end
 
@@ -253,13 +242,12 @@ end
     action_title: action_title,
     action_url: action_url,
     total_sent: total,
-    success_count: 0,
+    delivered_count: 0,
     failed_count: 0,
-    in_flight_count: total,
     clicked_count: 0
   )
 
-  success = 0
+  
   failed = 0
 
   PushSubscription.find_each do |subscription|
@@ -275,23 +263,19 @@ end
 
     begin
       PushNotificationService.send_notification(
-        subscription,
-        title,
-        body,
-        icon,
-        image,
-        action_title,
-        action_url
+        subscription: subscription,
+        notification_status: notification_status,
+        title: title,
+        body: body,
+        icon: icon,
+        image: image,
+        action_title: action_title,
+        action_url: action_url
       )
 
-      notification_status.update!(
-        status: :success,
-        sent_at: Time.current
-      )
+      
 
-      success += 1
-      campaign.increment!(:success_count)
-      campaign.decrement!(:in_flight_count)
+      
 
     rescue => e
 
@@ -300,8 +284,7 @@ end
         failure_reason: e.message
       )
       campaign.increment!(:failed_count)
-      campaign.decrement!(:in_flight_count)
-
+      
       failed += 1
 
       Rails.logger.error "Failed for Subscription ##{subscription.id}: #{e.message}"
@@ -309,7 +292,7 @@ end
   end
 
   redirect_to admin_push_subscriptions_path,
-              notice: "#{success} notification(s) sent successfully. #{failed} failed."
+              notice: "notification(s) sent successfully. #{failed} failed."
 end
 
   # for unsubcribering individuals

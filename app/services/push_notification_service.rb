@@ -1,8 +1,18 @@
 class PushNotificationService
-  def self.send_notification(subscription, title, body, icon = nil, image = nil, action_title, action_url)
-    
+  def self.send_notification(
+    subscription:,
+    notification_status:,
+    title:,
+    body:,
+    icon: nil,
+    image: nil,
+    action_title: nil,
+    action_url: nil
+  )
+
     WebPush.payload_send(
       message: {
+        status_id: notification_status.id,
         title: title,
         body: body,
         icon: icon,
@@ -26,6 +36,7 @@ class PushNotificationService
         private_key: "8xcrfmRSqTW9kS5GnAOa5LsHl506cwGZ9o5au5guhtk="
       }
     )
+
   rescue WebPush::ExpiredSubscription
     subscription.destroy
   end
