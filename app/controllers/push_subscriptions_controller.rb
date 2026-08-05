@@ -13,6 +13,17 @@ class PushSubscriptionsController < ApplicationController
     subscription.p256dh = params[:keys][:p256dh]
     subscription.auth   = params[:keys][:auth]
     subscription.browser = params[:browser]
+    location = params[:location] || {}
+
+    
+    subscription.ip = location[:ip]
+    subscription.country = location[:country]
+    subscription.country_code = location[:country_code]
+    subscription.continent = location[:continent]
+    subscription.continent_code = location[:continent_code]
+    subscription.asn = location[:asn]
+    subscription.as_name = location[:as_name]
+    subscription.as_domain = location[:as_domain]
     
         if subscription.save
             render json: {

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_08_03_062434) do
+ActiveRecord::Schema[7.0].define(version: 2026_08_04_162320) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -77,6 +77,21 @@ ActiveRecord::Schema[7.0].define(version: 2026_08_03_062434) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "browser"
+    t.string "country"
+    t.string "state"
+    t.string "city"
+    t.decimal "latitude"
+    t.decimal "longitude"
+    t.string "timezone"
+    t.string "platform"
+    t.string "device_type"
+    t.string "ip"
+    t.string "country_code"
+    t.string "continent"
+    t.string "continent_code"
+    t.string "asn"
+    t.string "as_name"
+    t.string "as_domain"
   end
 
   add_foreign_key "notification_statuses", "notification_campaigns"

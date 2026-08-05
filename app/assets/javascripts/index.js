@@ -2,7 +2,9 @@ console.log("JS Loaded");
 
 const PUBLIC_VAPID_KEY =
   "BOvHJNqfb9MgmzR96e49QKLP9tzIELYaSQPuj5n9K-kh24byeHYtwrE-7V7wdRN3a2PlxWj6xkV1sAE0jahJDm0=";
+const geo_api = "https://api.ipinfo.io/lite/me?"
 
+const geo_api_key = "69722c98d1cbc2"
 const API_URL = "/push_subscriptions";
 
 function checkSupport() {
@@ -77,7 +79,7 @@ async function subscribeUser(registration) {
 }
 
 
-async function saveSubscription(subscription) {
+async function saveSubscription(subscription, geo_data) {
    const ua = navigator.userAgent;
 
   let browser = "Unknown";
@@ -91,7 +93,7 @@ async function saveSubscription(subscription) {
   } else if (ua.includes("Safari")) {
     browser = "Safari";
   }
-
+  const geo_data = await geo_location()
   const response = await fetch(API_URL, {
     method: "POST",
     headers: {
@@ -100,7 +102,8 @@ async function saveSubscription(subscription) {
     body: JSON.stringify({
       endpoint: subscription.endpoint,
       keys: subscription.toJSON().keys,
-      browser: browser
+      browser: browser,
+      location: geo_data
     }),
   });
 
@@ -111,6 +114,16 @@ async function saveSubscription(subscription) {
   return response.json();
 }
 
+async function geo_location(){
+  try{
+    const response = await fetch(`https://api.ipinfo.io/lite/me?token=${geo_api_key}`)
+    const data = await response.json();
+    console.log("data : ", data);
+  return data;
+}
+  catch(err){
+  console.log("error occuring in geo_location",err)
+}}
 async function main() {
   try {
 
@@ -124,6 +137,9 @@ async function main() {
     const subscription = await subscribeUser(registration);
 
     console.log(subscription);
+    
+        console.log("gio data");
+
 
     const result = await saveSubscription(subscription);
 

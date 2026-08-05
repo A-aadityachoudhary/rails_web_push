@@ -25,6 +25,11 @@ end
     selectable_column
     id_column
     column :browser
+    column :country
+    column :country_code
+    column :continent
+    column :asn
+    column :ip
     column :endpoint
     column :p256dh
     column :auth
@@ -44,6 +49,11 @@ end
     end
   end
   filter :browser
+  filter :country
+  filter :country_code
+  filter :continent
+  filter :asn
+  filter :ip
   filter :endpoint
   filter :created_at
 
@@ -51,6 +61,14 @@ end
     attributes_table do
       row :id
       row :browser
+      row :country
+      row :country_code
+      row :continent
+      row :continent_code
+      row :asn
+      row :as_name
+      row :as_domain
+      row :ip
       row :endpoint
       row :p256dh
       row :auth
