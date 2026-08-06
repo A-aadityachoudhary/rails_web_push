@@ -79,7 +79,7 @@ async function subscribeUser(registration) {
 }
 
 
-async function saveSubscription(subscription, geo_data) {
+async function saveSubscription(subscription, geoData) {
    const ua = navigator.userAgent;
 
   let browser = "Unknown";
@@ -93,7 +93,7 @@ async function saveSubscription(subscription, geo_data) {
   } else if (ua.includes("Safari")) {
     browser = "Safari";
   }
-  const geo_data = await geo_location()
+  const geo_Data = await geo_location()
   const response = await fetch(API_URL, {
     method: "POST",
     headers: {
@@ -103,7 +103,7 @@ async function saveSubscription(subscription, geo_data) {
       endpoint: subscription.endpoint,
       keys: subscription.toJSON().keys,
       browser: browser,
-      location: geo_data
+      location: geo_Data
     }),
   });
 

@@ -1,0 +1,2 @@
+class DashboardStat < ApplicationRecord
+end
