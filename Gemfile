@@ -78,4 +78,3 @@ gem 'sassc-rails'
 gem 'ransack'
 gem "rack-cors"
 
-gem "solid_queue"

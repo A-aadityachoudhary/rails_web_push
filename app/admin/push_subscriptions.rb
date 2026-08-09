@@ -316,6 +316,11 @@ end
   # for unsubcribering individuals
   member_action :unsubscribe, method: :delete do
     resource.destroy
+    subscriber_count = PushSubscription.count
+    
+    DashboardStat.find_or_create_by!(id: 1).update!(
+      subscriber_count: subscriber_count
+    )
     redirect_to admin_push_subscriptions_path, notice: "Subscriber removed successfully."
   end 
 end

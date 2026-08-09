@@ -26,9 +26,15 @@ class PushSubscriptionsController < ApplicationController
     subscription.as_domain = location[:as_domain]
     
         if subscription.save
+            subscriber_count = PushSubscription.count
+            DashboardStat.find_or_create_by!(id: 1).update!(
+                subscriber_count: subscriber_count
+                )
+
             render json: {
                 success: true,
-                message: "subscription saved"
+                message: "subscription saved",
+                subscriber_count: subscriber_count
             },
             status: :created
         else
@@ -39,5 +45,23 @@ class PushSubscriptionsController < ApplicationController
             status: :unprocessable_entity
     end
         
+    end
+
+    def destroy
+        subscription = PushSubscription.find(params[:id])
+
+        subscription.destroy!
+
+        subscriber_count = PushSubscription.count
+
+        DashboardStat.find_or_create_by!(id: 1).update!(
+        subscriber_count: subscriber_count
+        )
+
+        render json: {
+        success: true,
+        message: "subscription deleted",
+        subscriber_count: subscriber_count
+        }
     end
 end
