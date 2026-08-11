@@ -58,6 +58,11 @@ Rails.application.configure do
 
   # Suppress logger output for asset requests.
   config.assets.quiet = true
+    
+  #cloudfare tunnel
+  config.hosts << "subscribers.vardarasoftware.com"
+  config.assume_ssl = true
+  config.force_ssl = false
 
   # Raises error for missing translations.
   # config.i18n.raise_on_missing_translations = true
