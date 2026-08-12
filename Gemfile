@@ -78,3 +78,6 @@ gem 'sassc-rails'
 gem 'ransack'
 gem "rack-cors"
 
+
+gem "solid_queue", "~> 1.6"
+gem "whenever", require: false

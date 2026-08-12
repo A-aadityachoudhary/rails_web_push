@@ -25,7 +25,10 @@ development:
   primary:
     <<: *default
     database: web_push_rails_development
-
+  queue:
+    <<: *default
+    database: web_push_rails_development
+    migrations_paths: db/queue_migrate
   
 
   # The specified database role being used to connect to postgres.

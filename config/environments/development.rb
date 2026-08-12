@@ -64,6 +64,10 @@ Rails.application.configure do
   config.assume_ssl = true
   config.force_ssl = false
 
+  #adding solid queue
+  config.active_job.queue_adapter = :solid_queue
+  config.solid_queue.connects_to = { database: { writing: :queue } }
+  
   # Raises error for missing translations.
   # config.i18n.raise_on_missing_translations = true
 
