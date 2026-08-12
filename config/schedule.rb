@@ -20,5 +20,5 @@
 # Learn more: http://github.com/javan/whenever
 set :environment, "development"
 every 1.minute do
-  runner "RecurringNotificationSchedulerJob.perform_later"
+  runner "RecurringNotificationSchedulerJob.perform_later" 
 end

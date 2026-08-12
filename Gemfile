@@ -81,3 +81,5 @@ gem "rack-cors"
 
 gem "solid_queue", "~> 1.6"
 gem "whenever", require: false
+
+gem "solid_queue_dashboard", "~> 0.2.0"
