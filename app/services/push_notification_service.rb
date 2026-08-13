@@ -38,6 +38,6 @@ class PushNotificationService
     )
 
   rescue WebPush::ExpiredSubscription
-    subscription.destroy
+    ArchivePushSubscriptionService.call(subscription)
   end
 end

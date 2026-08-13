@@ -315,7 +315,8 @@ end
 
   # for unsubcribering individuals
   member_action :unsubscribe, method: :delete do
-    resource.destroy
-    redirect_to admin_push_subscriptions_path, notice: "Subscriber removed successfully."
+    subscription = PushSubscription.find(params[:id])
+    ArchivePushSubscriptionService.call(subscription)
+    redirect_to admin_push_subscriptions_path, notice: "Subscriber archived successfully."
   end 
 end
