@@ -1,5 +1,51 @@
 console.log("JS Loaded");
 
+
+//page tracking using sendbeacon
+
+const pageVisitStartedAt = new Date();
+
+let pageVisitSent = false;
+
+function trackPageExit() {
+  
+  if (pageVisitSent) {
+    return;
+  }
+
+  pageVisitSent = true;
+
+  const leftAt = new Date();
+
+  const durationSeconds = Math.floor(
+    (leftAt.getTime() - pageVisitStartedAt.getTime()) / 1000
+  );
+
+  const data = new URLSearchParams();
+
+  data.append("page", window.location.pathname);
+  data.append("started_at", pageVisitStartedAt.toISOString());
+  data.append("left_at", leftAt.toISOString());
+  data.append("duration_seconds", durationSeconds);
+
+  const blob = new Blob(
+    [data.toString()],
+    {
+      type: "application/x-www-form-urlencoded"
+    }
+  );
+
+  const sent = navigator.sendBeacon("/page_visits", blob);
+
+  console.log("Page visit beacon sent:", sent);
+  console.log("Page:", window.location.pathname);
+  console.log("Duration:", durationSeconds, "seconds");
+}
+
+window.addEventListener("pagehide", trackPageExit);
+
+
+
 const PUBLIC_VAPID_KEY =
   "BOvHJNqfb9MgmzR96e49QKLP9tzIELYaSQPuj5n9K-kh24byeHYtwrE-7V7wdRN3a2PlxWj6xkV1sAE0jahJDm0=";
 const geo_api = "https://api.ipinfo.io/lite/me?"
