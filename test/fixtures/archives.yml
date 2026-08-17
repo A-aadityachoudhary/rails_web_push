@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  browser: MyString
+  country: MyString
+  country_code: MyString
+  continent: MyString
+  asn: MyString
+  ip: MyString
+  endpoint: MyText
+  p256dh: MyText
+  auth: MyText
+
+two:
+  browser: MyString
+  country: MyString
+  country_code: MyString
+  continent: MyString
+  asn: MyString
+  ip: MyString
+  endpoint: MyText
+  p256dh: MyText
+  auth: MyText

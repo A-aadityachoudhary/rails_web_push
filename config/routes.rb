@@ -11,4 +11,5 @@ Rails.application.routes.draw do
   resources :push_subscriptions, only: [:index, :create, :destroy]
   post "/notification_delivered", to: "notification_callbacks#notification_delivered"
   post "/notification_clicked", to: "notification_callbacks#notification_clicked"
+  post "/page_visits", to: "page_visits#create"
 end
