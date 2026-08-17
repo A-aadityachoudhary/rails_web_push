@@ -1,9 +1,10 @@
 class PushSubscription < ApplicationRecord
     has_many :notification_statuses, dependent: :destroy
-    has_many :page_visits
+    has_many :page_visits, dependent: :nullify
+    before_create :generate_subscriber_uuid
     after_commit :update_dashboard_subscriber_count
     def self.ransackable_attributes(auth_object = nil)
-        ["auth", "country", "country_code", "continent", "created_at", "continent_code", "asn", "as_name", "ip", "endpoint", "id", "p256dh", "browser", "updated_at"]
+        ["auth", "country", "country_code", "continent", "created_at", "continent_code", "asn", "as_name", "ip", "endpoint", "id", "p256dh", "browser","subscriber_uuid", "updated_at"]
     end
 
     def self.ransackable_associations(auth_object = nil)
@@ -17,7 +18,9 @@ class PushSubscription < ApplicationRecord
         UpdateSubscriberCountJob.perform_later
     end
 
-
+    def generate_subscriber_uuid
+        self.subscriber_uuid ||= SecureRandom.uuid
+    end
 
 
 end

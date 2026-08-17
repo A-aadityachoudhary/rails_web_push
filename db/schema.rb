@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_08_14_041121) do
+ActiveRecord::Schema[7.1].define(version: 2026_08_14_095744) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -101,10 +101,12 @@ ActiveRecord::Schema[7.1].define(version: 2026_08_14_041121) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "push_subscription_id"
+    t.string "subscriber_uuid"
     t.index ["left_at"], name: "index_page_visits_on_left_at"
     t.index ["page"], name: "index_page_visits_on_page"
     t.index ["push_subscription_id"], name: "index_page_visits_on_push_subscription_id"
     t.index ["started_at"], name: "index_page_visits_on_started_at"
+    t.index ["subscriber_uuid"], name: "index_page_visits_on_subscriber_uuid"
   end
 
   create_table "push_subscriptions", force: :cascade do |t|
@@ -129,6 +131,8 @@ ActiveRecord::Schema[7.1].define(version: 2026_08_14_041121) do
     t.string "asn"
     t.string "as_name"
     t.string "as_domain"
+    t.string "subscriber_uuid"
+    t.index ["subscriber_uuid"], name: "index_push_subscriptions_on_subscriber_uuid", unique: true
   end
 
   create_table "recurrings", force: :cascade do |t|

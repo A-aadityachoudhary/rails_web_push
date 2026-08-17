@@ -1,51 +1,5 @@
 console.log("JS Loaded");
 
-
-//page tracking using sendbeacon
-
-const pageVisitStartedAt = new Date();
-
-let pageVisitSent = false;
-
-function trackPageExit() {
-  
-  if (pageVisitSent) {
-    return;
-  }
-
-  pageVisitSent = true;
-
-  const leftAt = new Date();
-
-  const durationSeconds = Math.floor(
-    (leftAt.getTime() - pageVisitStartedAt.getTime()) / 1000
-  );
-
-  const data = new URLSearchParams();
-
-  data.append("page", window.location.pathname);
-  data.append("started_at", pageVisitStartedAt.toISOString());
-  data.append("left_at", leftAt.toISOString());
-  data.append("duration_seconds", durationSeconds);
-
-  const blob = new Blob(
-    [data.toString()],
-    {
-      type: "application/x-www-form-urlencoded"
-    }
-  );
-
-  const sent = navigator.sendBeacon("/page_visits", blob);
-
-  console.log("Page visit beacon sent:", sent);
-  console.log("Page:", window.location.pathname);
-  console.log("Duration:", durationSeconds, "seconds");
-}
-
-window.addEventListener("pagehide", trackPageExit);
-
-
-
 const PUBLIC_VAPID_KEY =
   "BOvHJNqfb9MgmzR96e49QKLP9tzIELYaSQPuj5n9K-kh24byeHYtwrE-7V7wdRN3a2PlxWj6xkV1sAE0jahJDm0=";
 const geo_api = "https://api.ipinfo.io/lite/me?"
@@ -157,8 +111,85 @@ async function saveSubscription(subscription, geoData) {
     throw new Error("Failed to save subscription");
   }
 
-  return response.json();
+  const result = await response.json();
+
+
+const subscriberUuid =
+    result.subscriber_uuid;
+
+  if (!subscriberUuid) {
+    console.error(
+      "subscriberUuid was not returned by Rails",
+      
+      result
+    );
+
+    throw new Error(
+      "subscriberUuid missing from server response"
+    );
+  }
+
+  localStorage.setItem("subscriber_uuid", subscriberUuid);
+    currentSubscriberUuid = subscriberUuid; // Cache globally in memory
+    
+    // Proactively notify the backend to backfill any anonymous visits from this session
+    navigator.sendBeacon("/page_visits/associate", new URLSearchParams({ subscriber_uuid: subscriberUuid }));
+
+  console.log(
+    "subscriberUuid saved:",
+    subscriberUuid
+  );
+
+  return result;
+
 }
+
+
+
+//page tracking using sendbeacon
+
+const pageVisitStartedAt = new Date();
+
+let pageVisitSent = false;
+function trackPageExit() {
+  if (pageVisitSent) return;
+  pageVisitSent = true;
+
+  const leftAt = new Date();
+  const durationSeconds = Math.floor((leftAt.getTime() - pageVisitStartedAt.getTime()) / 1000);
+  
+  // Use the memory token or fallback to localStorage
+  const uuid = currentSubscriberUuid || localStorage.getItem("subscriber_uuid");
+
+  const data = new URLSearchParams();
+  data.append("page", window.location.pathname);
+  data.append("started_at", pageVisitStartedAt.toISOString());
+  data.append("left_at", leftAt.toISOString());
+  data.append("duration_seconds", durationSeconds);
+  
+  if (uuid) {
+    data.append("subscriber_uuid", uuid);
+  } else {
+    // If tracking still fires before the UUID exists, send a temporary session token
+    // to map it later on the backend if needed
+    data.append("session_fallback_id", pageVisitStartedAt.getTime()); 
+  }
+
+  const blob = new Blob([data.toString()], { type: "application/x-www-form-urlencoded" });
+  navigator.sendBeacon("/page_visits", blob);
+}
+
+// "visibilitychange" is more reliable across mobile browsers than pagehide
+window.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden") {
+    trackPageExit();
+  }
+});
+window.addEventListener("pagehide", trackPageExit);
+
+
+let currentSubscriberUuid = localStorage.getItem("subscriber_uuid");
+
 
 async function geo_location(){
   try{

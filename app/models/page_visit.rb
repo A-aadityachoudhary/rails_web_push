@@ -1,5 +1,5 @@
 class PageVisit < ApplicationRecord
-  belongs_to :push_subscription, optional: true
+    belongs_to :push_subscription, optional: true
 
   def self.ransackable_attributes(auth_object = nil)
     [
@@ -9,6 +9,7 @@ class PageVisit < ApplicationRecord
       "left_at",
       "duration_seconds",
       "push_subscription_id",
+      "subscriber_uuid",
       "created_at",
       "updated_at"
     ]

@@ -4,12 +4,16 @@ class PageVisitsController < ApplicationController
   def create
     Rails.logger.info "========== PAGE VISIT BEACON RECEIVED =========="
     Rails.logger.info "Params: #{params.to_unsafe_h}"
+    uuid = params[:subscriber_uuid]
+    subscription = PushSubscription.find_by(subscriber_uuid: uuid) if uuid.present?
+
     PageVisit.create!(
       page: params[:page],
       started_at: parse_time(params[:started_at]),
       left_at: parse_time(params[:left_at]),
       duration_seconds: params[:duration_seconds].to_i,
-      push_subscription_id: params[:push_subscription_id]
+      subscriber_uuid: uuid,
+      push_subscription: subscription
     )
 
   

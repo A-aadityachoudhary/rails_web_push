@@ -3,29 +3,20 @@ ActiveAdmin.register PageVisit do
                 :started_at,
                 :left_at,
                 :duration_seconds,
-                :push_subscription_id
+                :push_subscription_id,
+                :subscriber_uuid
 
   index do
     selectable_column
-
     id_column
-
     column :page
 
-    column :push_subscription do |page_visit|
-      if page_visit.push_subscription
-        "Subscription ##{page_visit.push_subscription.id}"
-      else
-        "Unknown"
-      end
+    column "Subscriber UUID" do |page_visit|
+      page_visit.subscriber_uuid.presence || page_visit.push_subscription&.subscriber_uuid || "Unknown"
     end
 
-    column :browser do |page_visit|
-      page_visit.push_subscription&.browser
-    end
-
-    column :ip do |page_visit|
-      page_visit.push_subscription&.ip
+    column "Pushsubscription ID" do |page_visit|
+      page_visit.push_subscription ? link_to(page_visit.push_subscription.id, admin_push_subscription_path(page_visit.push_subscription)) : "Unknown"
     end
 
     column :started_at
@@ -36,7 +27,8 @@ ActiveAdmin.register PageVisit do
   end
 
   filter :page
-  filter :push_subscription_id
+  filter :subscriber_uuid
+  filter :push_subscription
   filter :started_at
   filter :left_at
   filter :duration_seconds
@@ -46,31 +38,20 @@ ActiveAdmin.register PageVisit do
       row :id
       row :page
 
-      row :push_subscription do |page_visit|
+      row "Subscriber UUID" do |page_visit|
+        
+        page_visit.subscriber_uuid.presence || page_visit.push_subscription&.subscriber_uuid || "Unknown"
+      end
+
+      row "Pushsubscription ID" do |page_visit|
         if page_visit.push_subscription
           link_to(
             "Subscription ##{page_visit.push_subscription.id}",
             admin_push_subscription_path(page_visit.push_subscription)
           )
         else
-          "Unknown / deleted subscription"
+          "1"
         end
-      end
-
-      row :browser do |page_visit|
-        page_visit.push_subscription&.browser
-      end
-
-      row :country do |page_visit|
-        page_visit.push_subscription&.country
-      end
-
-      row :country_code do |page_visit|
-        page_visit.push_subscription&.country_code
-      end
-
-      row :ip do |page_visit|
-        page_visit.push_subscription&.ip
       end
 
       row :started_at
