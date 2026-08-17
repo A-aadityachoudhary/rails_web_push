@@ -29,6 +29,7 @@ class PushSubscriptionsController < ApplicationController
             render json: {
                 success: true,
                 message: "subscription saved",
+                subscriber_uuid: subscription.subscriber_uuid
             },
             status: :created
         else
