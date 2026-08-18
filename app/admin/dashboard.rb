@@ -70,20 +70,6 @@ ActiveAdmin.register_page "Dashboard" do
         end
       end
     end
-    hr
-    columns do
-      column do
-        panel "Total Subscribers" do
-          div style: "font-size:20px; text-align:center; font-weight:bold; padding:30px;" do
-            link_to(
-            "Recurring notification",
-            admin_recurrings_path,
-            class: "button ",
-              style: "padding:10px"
-          )    
-          end
-        end
-      end
-    end
+    
   end
 end
