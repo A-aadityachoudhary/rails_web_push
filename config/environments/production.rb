@@ -28,6 +28,20 @@ Rails.application.configure do
   # Compress CSS using a preprocessor.
   # config.assets.css_compressor = :sass
 
+  #compressing js using terser.
+  config.assets.js_compressor = :terser
+
+  # Passing terser options
+  
+  config.assets.terser = {
+    compress: {
+      drop_console: true
+    },
+    mangle: {
+      toplevel: true
+    }
+  }
+
   # Do not fallback to assets pipeline if a precompiled asset is missed.
   config.assets.compile = true
   config.assets.digest = true

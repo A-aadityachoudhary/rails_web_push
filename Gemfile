@@ -78,6 +78,7 @@ gem 'sassc-rails'
 gem 'ransack'
 gem "rack-cors"
 
+gem "terser"
 
 gem "solid_queue", "~> 1.6"
 

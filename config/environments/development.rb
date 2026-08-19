@@ -58,6 +58,20 @@ Rails.application.configure do
 
   # Suppress logger output for asset requests.
   config.assets.quiet = true
+
+  #compressing js using terser.
+  config.assets.js_compressor = :terser
+
+  # Passing terser options
+  
+  config.assets.terser = {
+    compress: {
+      drop_console: true
+    },
+    mangle: {
+      toplevel: true
+    }
+  }
     
   #cloudfare tunnel
   config.hosts << "subscribers.vardarasoftware.com"
