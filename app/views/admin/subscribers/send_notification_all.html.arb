@@ -1,24 +1,30 @@
 active_admin_form_for :notification,
-                      url: send_notification_submit_admin_push_subscription_path(resource),
+                      url: send_notification_all_submit_admin_subscribers_path,
                       method: :post do |f|
 
   f.inputs "Notification Details" do
-    f.input :title
+    f.input :title,
+            input_html: {
+              placeholder: "Enter notification title"
+            }
 
     f.input :body,
             as: :text,
-            input_html: { rows: 4 }
+            input_html: {
+              rows: 4,
+              placeholder: "Enter notification message"
+            }
 
     f.input :icon,
             label: "Icon URL",
             input_html: {
-              placeholder: "https://example.com/icon.png"
+              placeholder: "https://your-site.com/icon.png"
             }
 
     f.input :image,
             label: "Image URL",
             input_html: {
-              placeholder: "https://example.com/banner.jpg"
+              placeholder: "https://your-site.com/banner.jpg"
             }
     f.input :action_title,
           label: "Button Text",
@@ -34,8 +40,8 @@ active_admin_form_for :notification,
   end
 
   f.actions do
-    f.action :submit, label: "Send Notification"
-    f.cancel_link(admin_push_subscriptions_path)
+    f.action :submit, label: "Send Notification to All"
+    f.cancel_link(admin_subscribers_path)
   end
 
 end

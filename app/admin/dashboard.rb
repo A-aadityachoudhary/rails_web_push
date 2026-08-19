@@ -19,7 +19,7 @@ ActiveAdmin.register_page "Dashboard" do
       column do
         panel "Chrome Subscribers" do
           div style: "font-size:40px; text-align:center; font-weight:bold; padding:20px;" do
-            PushSubscription.where(browser: "Chrome").count
+            Subscriber.where(browser: "Chrome").count
           end
         end
       end
@@ -27,7 +27,7 @@ ActiveAdmin.register_page "Dashboard" do
       column do
         panel "Firefox Subscribers" do
           div style: "font-size:40px; text-align:center; font-weight:bold; padding:20px;" do
-            PushSubscription.where(browser: "Firefox").count
+            Subscriber.where(browser: "Firefox").count
           end
         end
       end
@@ -35,7 +35,7 @@ ActiveAdmin.register_page "Dashboard" do
       column do
         panel "Safari Subscribers" do
           div style: "font-size:40px; text-align:center; font-weight:bold; padding:20px;" do
-            PushSubscription.where(browser: "Safari").count
+            Subscriber.where(browser: "Safari").count
           end
         end
       end
@@ -47,24 +47,24 @@ ActiveAdmin.register_page "Dashboard" do
       div do
         para do
           link_to(
-            "🟢 Chrome (#{PushSubscription.where(browser: 'Chrome').count})",
-            admin_push_subscriptions_path(q: { browser_eq: "Chrome" }),
+            "🟢 Chrome (#{Subscriber.where(browser: 'Chrome').count})",
+            admin_subscribers_path(q: { browser_eq: "Chrome" }),
             class: "button"
           )
         end
 
         para do
           link_to(
-            "🟠 Firefox (#{PushSubscription.where(browser: 'Firefox').count})",
-            admin_push_subscriptions_path(q: { browser_eq: "Firefox" }),
+            "🟠 Firefox (#{Subscriber.where(browser: 'Firefox').count})",
+            admin_subscribers_path(q: { browser_eq: "Firefox" }),
             class: "button"
           )
         end
 
         para do
           link_to(
-            "🔵 Safari (#{PushSubscription.where(browser: 'Safari').count})",
-            admin_push_subscriptions_path(q: { browser_eq: "Safari" }),
+            "🔵 Safari (#{Subscriber.where(browser: 'Safari').count})",
+            admin_subscribers_path(q: { browser_eq: "Safari" }),
             class: "button"
           )
         end

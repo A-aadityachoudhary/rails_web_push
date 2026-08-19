@@ -1,4 +1,4 @@
-class PushSubscription < ApplicationRecord
+class Subscriber < ApplicationRecord
     has_many :notification_statuses, dependent: :destroy
     after_commit :update_dashboard_subscriber_count
     def self.ransackable_attributes(auth_object = nil)

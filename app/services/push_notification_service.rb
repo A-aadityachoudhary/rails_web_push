@@ -1,6 +1,6 @@
 class PushNotificationService
   def self.send_notification(
-    subscription:,
+    subscriber:,
     notification_status:,
     title:,
     body:,
@@ -26,9 +26,9 @@ class PushNotificationService
         ]
       }.to_json,
 
-      endpoint: subscription.endpoint,
-      p256dh: subscription.p256dh,
-      auth: subscription.auth,
+      endpoint: subscriber.endpoint,
+      p256dh: subscriber.p256dh,
+      auth: subscriber.auth,
 
       vapid: {
         subject: "mailto:admin@example.com",

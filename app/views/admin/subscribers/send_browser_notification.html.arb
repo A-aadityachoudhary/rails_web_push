@@ -1,7 +1,7 @@
 h2 "Send Notification to #{@browser} Users"
 
 active_admin_form_for :notification,
-                      url: send_browser_notification_submit_admin_push_subscriptions_path,
+                      url: send_browser_notification_submit_admin_subscribers_path,
                       method: :post do |f|
                       
   f.inputs "Notification Details" do
@@ -20,6 +20,6 @@ active_admin_form_for :notification,
 
   f.actions do
     f.action :submit, label: "Send to #{@browser} Users"
-    f.cancel_link(admin_push_subscriptions_path)
+    f.cancel_link(admin_subscribers_path)
   end
 end
