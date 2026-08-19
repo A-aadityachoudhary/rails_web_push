@@ -1,4 +1,4 @@
-ActiveAdmin.register PushSubscription do
+ActiveAdmin.register Subscriber do
   permit_params :endpoint, :p256dh, :auth
 
  action_item :send_browser_notification, only: :index do
@@ -7,7 +7,7 @@ ActiveAdmin.register PushSubscription do
   if browser.present?
     link_to(
       "Send Notification To All #{browser} Users",
-      send_browser_notification_admin_push_subscriptions_path(browser: browser)
+      send_browser_notification_admin_subscribers_path(browser: browser)
     )
   end
 end
@@ -16,7 +16,7 @@ end
     unless params.dig(:q, :browser_eq).present?
       link_to(
         "Send Notification To All",
-        send_notification_all_admin_push_subscriptions_path
+        send_notification_all_admin_subscribers_path
       )
     end
   end
@@ -36,11 +36,11 @@ end
     column :created_at
     actions defaults: true do |subscription|
     item "Send",
-           send_notification_admin_push_subscription_path(subscription),
+           send_notification_admin_subscriber_path(subscription),
            class: "member_link" 
 
     item "Unsubscribe",
-         unsubscribe_admin_push_subscription_path(subscription),
+         unsubscribe_admin_subscriber_path(subscription),
          method: :delete,
          data: { confirm: "Remove this subscriber?" },
          class: "member_link"
@@ -105,7 +105,7 @@ end
 
   status = NotificationStatus.create!(
     notification_campaign: campaign,
-    push_subscription: resource,
+    subscriber: resource,
     title: title,
     body: body,
     status: :in_flight
@@ -114,7 +114,7 @@ end
   begin
 
     PushNotificationService.send_notification(
-      subscription: resource,
+      subscriber: resource,
       notification_status: status,
       title: title,
       body: body,
@@ -141,7 +141,7 @@ end
 
   end
 
-  redirect_to admin_push_subscriptions_path,
+  redirect_to admin_subscribers_path,
                         notice: "notification sent successfully."
 end
 # for all subscribers
@@ -151,7 +151,7 @@ end
   collection_action :send_browser_notification, method: :get do
     @browser = params[:browser].presence || params.dig(:q, :browser)
     if @browser.blank?
-      redirect_to admin_push_subscriptions_path, alert: "Please select or filter by a browser first."
+      redirect_to admin_subscribers_path, alert: "Please select or filter by a browser first."
     end
   end
 
@@ -161,7 +161,7 @@ end
     Rails.logger.info "Sending notifications for Browser = #{browser}"
 
     if browser.blank?
-      redirect_to admin_push_subscriptions_path, alert: "Browser parameter was missing."
+      redirect_to admin_subscribers_path, alert: "Browser parameter was missing."
       return
     end
 
@@ -172,7 +172,7 @@ end
   action_title = params[:notification][:action_title]
   action_url   = params[:notification][:action_url]
 
-  subscribers = PushSubscription.where(browser: browser)
+  subscribers = subscribers = Subscriber.where(browser: browser)
 
   total = subscribers.count
 
@@ -192,11 +192,11 @@ end
  
   failed = 0
 
-  subscribers.find_each do |subscription|
+  subscribers.find_each do |subscriber|
 
     notification_status = NotificationStatus.create!(
       notification_campaign: campaign,
-      push_subscription: subscription,
+      subscriber: subscription,
       title: title,
       body: body,
       status: :in_flight
@@ -205,7 +205,7 @@ end
     begin
 
       PushNotificationService.send_notification(
-        subscription: subscription,
+        subscriber: subscriber,
         notification_status: notification_status,
         title: title,
         body: body,
@@ -235,7 +235,7 @@ end
 
   end
 
-  redirect_to admin_push_subscriptions_path(
+  redirect_to admin_subscribers_path(
     q: { browser_eq: browser }
   ), notice: "# notification(s) sent successfully to #{browser} users. #{failed} failed."
 
@@ -250,7 +250,7 @@ end
   action_title = params[:notification][:action_title]
   action_url   = params[:notification][:action_url]
 
-  total = PushSubscription.count
+  total = Subscriber.count
 
   campaign = NotificationCampaign.create!(
     title: title,
@@ -268,12 +268,12 @@ end
   
   failed = 0
 
-  PushSubscription.find_each do |subscription|
+  Subscriber.find_each do |subscriber|
 
     # Create a tracking record for this subscriber
     notification_status = NotificationStatus.create!(
       notification_campaign: campaign,
-      push_subscription: subscription,
+      subscriber: subscriber,
       title: title,
       body: body,
       status: :in_flight
@@ -281,7 +281,7 @@ end
 
     begin
       PushNotificationService.send_notification(
-        subscription: subscription,
+        subscriber: subscriber,
         notification_status: notification_status,
         title: title,
         body: body,
@@ -309,13 +309,13 @@ end
     end
   end
 
-  redirect_to admin_push_subscriptions_path,
+  redirect_to admin_subscribers_path,
               notice: "notification(s) sent successfully. #{failed} failed."
 end
 
   # for unsubcribering individuals
   member_action :unsubscribe, method: :delete do
     resource.destroy
-    redirect_to admin_push_subscriptions_path, notice: "Subscriber removed successfully."
+    redirect_to admin_subscribers_path, notice: "Subscriber removed successfully."
   end 
 end

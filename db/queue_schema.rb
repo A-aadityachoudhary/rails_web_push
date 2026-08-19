@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_08_11_151137) do
+ActiveRecord::Schema[7.1].define(version: 2026_08_19_045226) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -40,6 +40,21 @@ ActiveRecord::Schema[7.1].define(version: 2026_08_11_151137) do
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
   end
 
+  create_table "archives", force: :cascade do |t|
+    t.string "browser"
+    t.string "country"
+    t.string "country_code"
+    t.string "continent"
+    t.string "asn"
+    t.string "ip"
+    t.text "endpoint"
+    t.text "p256dh"
+    t.text "auth"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "push_subscription_id"
+  end
+
   create_table "dashboard_stats", force: :cascade do |t|
     t.integer "subscriber_count"
     t.integer "notification_count"
@@ -64,7 +79,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_08_11_151137) do
   end
 
   create_table "notification_statuses", force: :cascade do |t|
-    t.bigint "push_subscription_id", null: false
+    t.bigint "subscriber_id", null: false
     t.string "title"
     t.text "body"
     t.integer "status"
@@ -75,31 +90,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_08_11_151137) do
     t.datetime "updated_at", null: false
     t.bigint "notification_campaign_id"
     t.index ["notification_campaign_id"], name: "index_notification_statuses_on_notification_campaign_id"
-    t.index ["push_subscription_id"], name: "index_notification_statuses_on_push_subscription_id"
-  end
-
-  create_table "push_subscriptions", force: :cascade do |t|
-    t.text "endpoint"
-    t.text "p256dh"
-    t.text "auth"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "browser"
-    t.string "country"
-    t.string "state"
-    t.string "city"
-    t.decimal "latitude"
-    t.decimal "longitude"
-    t.string "timezone"
-    t.string "platform"
-    t.string "device_type"
-    t.string "ip"
-    t.string "country_code"
-    t.string "continent"
-    t.string "continent_code"
-    t.string "asn"
-    t.string "as_name"
-    t.string "as_domain"
+    t.index ["subscriber_id"], name: "index_notification_statuses_on_subscriber_id"
   end
 
   create_table "recurrings", force: :cascade do |t|
@@ -236,8 +227,34 @@ ActiveRecord::Schema[7.1].define(version: 2026_08_11_151137) do
     t.index ["key"], name: "index_solid_queue_semaphores_on_key", unique: true
   end
 
+  create_table "subscribers", force: :cascade do |t|
+    t.text "endpoint"
+    t.text "p256dh"
+    t.text "auth"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "browser"
+    t.string "country"
+    t.string "state"
+    t.string "city"
+    t.decimal "latitude"
+    t.decimal "longitude"
+    t.string "timezone"
+    t.string "platform"
+    t.string "device_type"
+    t.string "ip"
+    t.string "country_code"
+    t.string "continent"
+    t.string "continent_code"
+    t.string "asn"
+    t.string "as_name"
+    t.string "as_domain"
+    t.string "subscriber_uuid"
+    t.index ["subscriber_uuid"], name: "index_subscribers_on_subscriber_uuid", unique: true
+  end
+
   add_foreign_key "notification_statuses", "notification_campaigns"
-  add_foreign_key "notification_statuses", "push_subscriptions"
+  add_foreign_key "notification_statuses", "subscribers"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_failed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

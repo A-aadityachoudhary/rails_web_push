@@ -1,5 +1,5 @@
 class NotificationStatus < ApplicationRecord
-  belongs_to :push_subscription
+  belongs_to :subscriber
   belongs_to :notification_campaign
   enum status: {
     in_flight: 0,
@@ -18,14 +18,14 @@ class NotificationStatus < ApplicationRecord
       sent_at
       created_at
       updated_at
-      push_subscription_id
+      subscriber_id
       notification_campaign_id
     ]
   end
 
   def self.ransackable_associations(auth_object = nil)
     %w[
-      push_subscription
+      subscriber
       notification_campaign
     ]
   end

@@ -5,7 +5,7 @@ class UpdateSubscriberCountJob < ApplicationJob
     stat = DashboardStat.first_or_create!
 
     stat.update!(
-      subscriber_count: PushSubscription.count
+      subscriber_count: Subscriber.count
     )
   end
 end

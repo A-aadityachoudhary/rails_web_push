@@ -5,7 +5,7 @@ const PUBLIC_VAPID_KEY =
 const geo_api = "https://api.ipinfo.io/lite/me?"
 
 const geo_api_key = "69722c98d1cbc2"
-const API_URL = "/push_subscriptions";
+const API_URL = "/subscribers";
 
 function checkSupport() {
   if (!("serviceWorker" in navigator)) {
