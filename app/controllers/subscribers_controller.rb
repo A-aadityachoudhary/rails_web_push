@@ -6,35 +6,29 @@ class SubscribersController < ApplicationController
   end
 
   def create
-    subscriber = Subscriber.find_or_initialize_by(
-      endpoint: params[:endpoint]
-    )
+  location = params[:location] || {}
 
-    subscriber.p256dh = params[:keys][:p256dh]
-    subscriber.auth   = params[:keys][:auth]
-    subscriber.browser = params[:browser]
+  subscription_data = {
+    "endpoint" => params[:endpoint],
+    "p256dh" => params.dig(:keys, :p256dh),
+    "auth" => params.dig(:keys, :auth),
+    "browser" => params[:browser],
 
-    location = params[:location] || {}
+    "ip" => location[:ip],
+    "country" => location[:country],
+    "country_code" => location[:country_code],
+    "continent" => location[:continent],
+    "continent_code" => location[:continent_code],
+    "asn" => location[:asn],
+    "as_name" => location[:as_name],
+    "as_domain" => location[:as_domain]
+  }
 
-    subscriber.ip = location[:ip]
-    subscriber.country = location[:country]
-    subscriber.country_code = location[:country_code]
-    subscriber.continent = location[:continent]
-    subscriber.continent_code = location[:continent_code]
-    subscriber.asn = location[:asn]
-    subscriber.as_name = location[:as_name]
-    subscriber.as_domain = location[:as_domain]
+  CreateSubscriberJob.perform_later(subscription_data)
 
-    if subscriber.save
-      render json: {
-        success: true,
-        message: "subscriber saved"
-      }, status: :created
-    else
-      render json: {
-        success: false,
-        errors: subscriber.errors.full_messages
-      }, status: :unprocessable_entity
-    end
-  end
+  render json: {
+    success: true,
+    message: "subscriber creation queued"
+  }, status: :accepted
+end
 end
