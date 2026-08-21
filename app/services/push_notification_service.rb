@@ -38,6 +38,6 @@ class PushNotificationService
     )
 
   rescue WebPush::ExpiredSubscription
-    subscription.destroy
+    DeleteSubscriberJob.perform_later(subscriber.id)
   end
 end

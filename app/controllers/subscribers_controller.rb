@@ -31,4 +31,14 @@ class SubscribersController < ApplicationController
     message: "subscriber creation queued"
   }, status: :accepted
 end
+
+  def destroy
+      subscriber_id = params[:id]
+
+      DeleteSubscriberJob.perform_later(subscriber_id)
+
+      render json: {
+        message: "Subscriber deletion queued successfully"
+      }, status: :accepted
+    end
 end

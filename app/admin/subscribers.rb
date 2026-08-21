@@ -314,8 +314,8 @@ end
 end
 
   # for unsubcribering individuals
-  member_action :unsubscribe, method: :delete do
-    resource.destroy
-    redirect_to admin_subscribers_path, notice: "Subscriber removed successfully."
+  member_action :unsubscribe, method: :delete do  
+    DeleteSubscriberJob.perform_later(resource.id)
+    redirect_to admin_subscribers_path, notice: "Subscriber removal queued successfully"
   end 
 end
