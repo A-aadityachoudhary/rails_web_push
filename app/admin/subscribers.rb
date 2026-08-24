@@ -111,35 +111,7 @@ end
     status: :in_flight
   )
 
-  begin
-
-    PushNotificationService.send_notification(
-      subscriber: resource,
-      notification_status: status,
-      title: title,
-      body: body,
-      icon: icon,
-      image: image,
-      action_title: action_title,
-      action_url: action_url
-    )
-
-    
-
-
-
-
-  rescue => e
-
-    status.update!(
-      status: :failed,
-      failure_reason: e.message
-    )
-
-    campaign.increment!(:failed_count)
-   
-
-  end
+  SendPushNotificationJob.perform_later(status.id)
 
   redirect_to admin_subscribers_path,
                         notice: "notification sent successfully."
@@ -172,7 +144,7 @@ end
   action_title = params[:notification][:action_title]
   action_url   = params[:notification][:action_url]
 
-  subscribers = subscribers = Subscriber.where(browser: browser)
+  subscribers = Subscriber.where(browser: browser)
 
   total = subscribers.count
 
@@ -190,54 +162,25 @@ end
   )
 
  
-  failed = 0
+
 
   subscribers.find_each do |subscriber|
 
     notification_status = NotificationStatus.create!(
       notification_campaign: campaign,
-      subscriber: subscription,
+      subscriber: subscriber,
       title: title,
       body: body,
       status: :in_flight
     )
 
-    begin
-
-      PushNotificationService.send_notification(
-        subscriber: subscriber,
-        notification_status: notification_status,
-        title: title,
-        body: body,
-        icon: icon,
-        image: image,
-        action_title: action_title,
-        action_url: action_url
-      )
-
-      
-
-    rescue => e
-
-      notification_status.update!(
-        status: :failed,
-        failure_reason: e.message
-      )
-
-      campaign.increment!(:failed_count)
-      
-
-      failed += 1
-
-      Rails.logger.error "Failed for #{browser} Subscription ##{subscription.id}: #{e.message}"
-
-    end
+    SendPushNotificationJob.perform_later(notification_status.id)
 
   end
 
   redirect_to admin_subscribers_path(
     q: { browser_eq: browser }
-  ), notice: "# notification(s) sent successfully to #{browser} users. #{failed} failed."
+  ), notice: "# notification(s) sent successfully to #{browser} users."
 
 end
 
@@ -266,7 +209,7 @@ end
   )
 
   
-  failed = 0
+ 
 
   Subscriber.find_each do |subscriber|
 
@@ -279,38 +222,11 @@ end
       status: :in_flight
     )
 
-    begin
-      PushNotificationService.send_notification(
-        subscriber: subscriber,
-        notification_status: notification_status,
-        title: title,
-        body: body,
-        icon: icon,
-        image: image,
-        action_title: action_title,
-        action_url: action_url
-      )
-
-      
-
-      
-
-    rescue => e
-
-      notification_status.update!(
-        status: :failed,
-        failure_reason: e.message
-      )
-      campaign.increment!(:failed_count)
-      
-      failed += 1
-
-      Rails.logger.error "Failed for Subscription ##{subscription.id}: #{e.message}"
-    end
+    SendPushNotificationJob.perform_later(notification_status.id)
   end
 
   redirect_to admin_subscribers_path,
-              notice: "notification(s) sent successfully. #{failed} failed."
+              notice: "notification(s) sent successfully."
 end
 
   # for unsubcribering individuals
