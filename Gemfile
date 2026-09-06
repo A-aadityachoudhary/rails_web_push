@@ -84,3 +84,5 @@ gem "solid_queue", "~> 1.6"
 
 
 gem "solid_queue_dashboard", "~> 0.2.0"
+
+gem "tailwindcss-rails", "~> 4.6"
